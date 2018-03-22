@@ -151,6 +151,12 @@ var numSales;
   The breakdown above takes up a lot of space, feel free to move it to the top or bottom of the file!
 */
 
+function saleTran(tran) {
+  return tran['type'] === 'sale';
+}
+
+numSales = transactions.filter(saleTran).length;
+
 console.log( 'The total number of sales is:', numSales );
 
 
@@ -161,6 +167,12 @@ console.log( 'The total number of sales is:', numSales );
   Calculate the total number of 'purchases'.
 */
 var numPurchases;
+
+function purchaseTran(tran) {
+  return tran['type'] === 'purchase';
+}
+
+numPurchases = transactions.filter(purchaseTran).length;
 
 console.log( 'The total number of purchases is:', numPurchases );
 
@@ -176,6 +188,12 @@ console.log( 'The total number of purchases is:', numPurchases );
 */
 var numCashSales;
 
+function cashTran(tran) {
+  return tran['paymentMethod'] === 'cash';
+}
+
+numCashSales = transactions.filter(saleTran).filter(cashTran).length;
+
 console.log( 'The total number of cash sales is:', numCashSales );
 
 
@@ -189,6 +207,12 @@ console.log( 'The total number of cash sales is:', numCashSales );
   - Make sure to exclude any 'sales' made by 'credit'!
 */
 var numCreditPurchases;
+
+function creditTran(tran) {
+  return tran['paymentMethod'] === 'credit';
+}
+
+numCreditPurchases = transactions.filter(purchaseTran).filter(creditTran).length;
 
 console.log( 'The total number of credit purchases is:', numCreditPurchases );
 
@@ -207,6 +231,12 @@ console.log( 'The total number of credit purchases is:', numCreditPurchases );
 */
 var allVendors;
 
+function vendorName(tran) {
+  return tran['vendor'];
+}
+
+allVendors = transactions.filter(purchaseTran).map(vendorName)
+
 console.log( 'The vendors are:', allVendors );
 
 
@@ -223,6 +253,12 @@ console.log( 'The vendors are:', allVendors );
   - Make sure that the resulting array *does not* include any duplicates.
 */
 var uniqueCustomers;
+
+function customerName(tran) {
+  return tran['customer'];
+}
+
+uniqueCustomers = transactions.filter(saleTran).map(customerName);
 
 console.log( 'The unique customers are:', uniqueCustomers );
 
@@ -242,6 +278,27 @@ console.log( 'The unique customers are:', uniqueCustomers );
 */
 var bigSpenders;
 
+function compareNumbers(number1, number2) {
+  return number1 - number2;
+}
+
+function tranCount(tran) {
+  return tran['items'].length;
+}
+
+function addNumberOfItems(tran) {
+  tran.numItems = tran['items'].length;
+  return tran;
+}
+
+findItemNumber = transactions.filter(saleTran).map(tranCount).sort(compareNumbers).pop();
+
+function findTranByItem(tran) {
+  return tran['numItems'] === findItemNumber;
+}
+
+bigSpenders = transactions.filter(saleTran).map(addNumberOfItems).filter(findTranByItem)[0].customer;
+
 console.log( 'The "big spenders" are:', bigSpenders );
 
 
@@ -255,6 +312,20 @@ console.log( 'The "big spenders" are:', bigSpenders );
   - Transactions don't have 'prices', but their 'items' do!
 */
 var sumSales;
+
+function addSum(accumulator, currentValue) {
+  return accumulator + currentValue;
+}
+
+function itemPrice(item) {
+  return item['price'];
+}
+
+function tranPrices(tran) {
+  return tran['items'].map(itemPrice).reduce(addSum);
+}
+
+sumSales = transactions.filter(saleTran).map(tranPrices).reduce(addSum);
 
 console.log( 'The sum of all sales is:', sumSales );
 
@@ -271,6 +342,8 @@ console.log( 'The sum of all sales is:', sumSales );
 */
 
 var sumPurchases;
+
+sumPurchases = transactions.filter(purchaseTran).map(tranPrices).reduce(addSum);
 
 console.log( 'The sum of all purhcases is:', sumPurchases );
 
@@ -290,6 +363,8 @@ console.log( 'The sum of all purhcases is:', sumPurchases );
 */
 var netProfit;
 
+netProfit = sumSales + sumPurchases;
+
 console.log( 'The net profit is:', netProfit );
 
 
@@ -304,6 +379,8 @@ console.log( 'The net profit is:', netProfit );
 */
 var mostItems;
 
+mostItems = transactions.filter(saleTran).map(tranCount).sort(compareNumbers).pop();
+
 console.log( 'The most items sold in a single transaction is:', mostItems );
 
 
@@ -314,5 +391,13 @@ console.log( 'The most items sold in a single transaction is:', mostItems );
   Calculate the sum of the 'purchase' with the fewest items.
 */
 var sumOfSmallestPurchase;
+
+findItemNumber = transactions.filter(purchaseTran).map(tranCount).sort(compareNumbers)[0];
+
+function findTranByItem(tran) {
+  return tran['numItems'] === findItemNumber;
+}
+
+sumOfSmallestPurchase = transactions.filter(purchaseTran).map(addNumberOfItems).filter(findTranByItem).map(tranPrices)[0];
 
 console.log( 'The sum of the smallest purchase is:', sumOfSmallestPurchase );
